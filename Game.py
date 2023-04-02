@@ -80,6 +80,8 @@ class Game(Wrapper):
     def draw_fleet(self):
         for ship in self.fleet:
             ship.draw(self.screen)
+            ship.snap_to_grid_edge(self.left_grid.grid_cells_coords,CELL_SIZE[0])
+            ship.snap_to_grid(self.left_grid.grid_cells_coords,CELL_SIZE[0])
         pg.display.update()
 
     def update_screen(self):
