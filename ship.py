@@ -90,4 +90,5 @@ class Ship(Wrapper):
                     else:
                         self.image_rect.topleft = (cell[0] + (cell_size - self.image.get_width()) // 2, cell[1])
 
+
         self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center

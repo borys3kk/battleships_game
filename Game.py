@@ -34,6 +34,7 @@ class Game(Wrapper):
     def __init__(self):
         super().__init__()
         pg.init()
+        
         self.screen = pg.display.set_mode(WIN_SIZE)
         pg.display.set_caption("Battleships game")
         self.get_images()
@@ -62,6 +63,7 @@ class Game(Wrapper):
         self.screen.blit(self.ocean_image, TOP_LEFT_GRID_LEFT)
         self.screen.blit(self.radar_image, TOP_LEFT_GRID_RIGHT)
         pg.display.update()
+
 
     def load_image(self, path, rotate=False):  # we dont need to pass size here because its already declared as constant
         return super().load_image(path, GRID_SIZE, rotate)
