@@ -34,7 +34,6 @@ class Game(Wrapper):
     def __init__(self):
         super().__init__()
         pg.init()
-        
         self.screen = pg.display.set_mode(WIN_SIZE)
         pg.display.set_caption("Battleships game")
         self.get_images()
@@ -55,7 +54,6 @@ class Game(Wrapper):
                             ship.drag_ship(self)
                             pg.display.update()
 
-
     def get_images(self):
         self.ocean_image = self.load_image("assets/grids/ocean_grid.png")
         self.radar_image = self.load_image("assets/grids/radar_grid.png")
@@ -63,7 +61,6 @@ class Game(Wrapper):
         self.screen.blit(self.ocean_image, TOP_LEFT_GRID_LEFT)
         self.screen.blit(self.radar_image, TOP_LEFT_GRID_RIGHT)
         pg.display.update()
-
 
     def load_image(self, path, rotate=False):  # we dont need to pass size here because its already declared as constant
         return super().load_image(path, GRID_SIZE, rotate)
@@ -82,12 +79,12 @@ class Game(Wrapper):
     def draw_fleet(self):
         for ship in self.fleet:
             ship.draw(self.screen)
-            ship.snap_to_grid_edge(self.left_grid.grid_cells_coords,CELL_SIZE[0])
-            ship.snap_to_grid(self.left_grid.grid_cells_coords,CELL_SIZE[0])
+            ship.snap_to_grid_edge(self.left_grid.grid_cells_coords, CELL_SIZE[0])
+            ship.snap_to_grid(self.left_grid.grid_cells_coords, CELL_SIZE[0])
         pg.display.update()
 
     def update_screen(self):
-        self.screen.fill((0,0,0))
+        self.screen.fill((0, 0, 0))
         self.get_images()
         self.draw_fleet()
         pg.display.update()
