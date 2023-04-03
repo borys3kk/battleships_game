@@ -13,28 +13,20 @@ GRID_ROW_CNT = 11  # number of rows  (with coord marker)
 GRID_COL_CNT = 11  # number of columns (with coord marker)
 CELL_SIZE = (GRID_SIZE[0] // GRID_COL_CNT, GRID_SIZE[1] // GRID_ROW_CNT)  # size of 1 cell
 FLEET = {
-    'battleship': ['battleship', 'assets/ships/battleship/battleship.png', (125, 600), (40, 195),
-                   4, 'assets/ships/battleship/battleshipgun.png', (0.4, 0.125), [-0.525, -0.34, 0.67, 0.49]],
-    'cruiser': ['cruiser', 'assets/ships/cruiser/cruiser.png', (200, 600), (40, 195),
-                2, 'assets/ships/cruiser/cruisergun.png', (0.4, 0.125), [-0.36, 0.64]],
-    'destroyer': ['destroyer', 'assets/ships/destroyer/destroyer.png', (275, 600), (30, 145),
-                  2, 'assets/ships/destroyer/destroyergun.png', (0.5, 0.15), [-0.52, 0.71]],
-    'patrol boat': ['patrol boat', 'assets/ships/patrol boat/patrol boat.png', (425, 600), (20, 95),
-                    0, '', None, None],
-    'submarine': ['submarine', 'assets/ships/submarine/submarine.png', (350, 600), (30, 145),
-                  1, 'assets/ships/submarine/submarinegun.png', (0.25, 0.125), [-0.45]],
-    'carrier': ['carrier', 'assets/ships/carrier/carrier.png', (50, 600), (45, 245),
-                0, '', None, None],
-    'rescue ship': ['rescue ship', 'assets/ships/rescue ship/rescue ship.png', (500, 600), (20, 95),
-                    0, '', None, None]
+    'battleship': ['battleship', 'assets/ships/battleship/battleship.png', (125, 600), (40, 195)],
+    'cruiser': ['cruiser', 'assets/ships/cruiser/cruiser.png', (200, 600), (40, 195)],
+    'destroyer': ['destroyer', 'assets/ships/destroyer/destroyer.png', (275, 600), (30, 145)],
+    'patrol boat': ['patrol boat', 'assets/ships/patrol boat/patrol boat.png', (425, 600), (20, 95)],
+    'submarine': ['submarine', 'assets/ships/submarine/submarine.png', (350, 600), (30, 145)],
+    'carrier': ['carrier', 'assets/ships/carrier/carrier.png', (50, 600), (45, 245)],
+    'rescue ship': ['rescue ship', 'assets/ships/rescue ship/rescue ship.png', (500, 600), (20, 95)]
 }
 
 
 class Game(Wrapper):
-    def __init__(self):
+    def __init__(self,screen):
         super().__init__()
-        pg.init()
-        self.screen = pg.display.set_mode(WIN_SIZE)
+        self.screen = screen
         pg.display.set_caption("Battleships game")
         self.get_images()
 
@@ -57,7 +49,7 @@ class Game(Wrapper):
     def get_images(self):
         self.ocean_image = self.load_image("assets/grids/ocean_grid.png")
         self.radar_image = self.load_image("assets/grids/radar_grid.png")
-
+        self.screen.fill((0,0,0))
         self.screen.blit(self.ocean_image, TOP_LEFT_GRID_LEFT)
         self.screen.blit(self.radar_image, TOP_LEFT_GRID_RIGHT)
         pg.display.update()
@@ -89,5 +81,3 @@ class Game(Wrapper):
         self.draw_fleet()
         pg.display.update()
 
-
-g = Game()
