@@ -46,9 +46,11 @@ class Game(Wrapper):
                         if ship.v_image_rect.collidepoint(pg.mouse.get_pos()):
                             ship.active = True
                             ship.drag_ship(self)
+                            self.create_game_logic(self.fleet, self.left_grid.grid_cells_coords)
                             pg.display.update()
                 elif event.type == pg.KEYDOWN:
                     self.randomize_ships(self.fleet, self.left_grid.grid_cells_coords)
+                    self.create_game_logic(self.fleet, self.left_grid.grid_cells_coords)
                     self.update_screen()
 
     def get_images(self):
@@ -58,6 +60,7 @@ class Game(Wrapper):
         self.screen.blit(self.ocean_image, TOP_LEFT_GRID_LEFT)
         self.screen.blit(self.radar_image, TOP_LEFT_GRID_RIGHT)
         pg.display.update()
+
 
     def load_image(self, path, rotate=False):  # we dont need to pass size here because its already declared as constant
         return super().load_image(path, GRID_SIZE, rotate)
@@ -112,6 +115,20 @@ class Game(Wrapper):
                             valid_position = True
                 else: valid_position = True
             placed_ships.append(ship)
+
+    def create_game_logic(self,fleet,grid_coords):
+        n = GRID_COL_CNT-1
+        game_logic = [[0 for _ in range(n)] for _ in range(n)]
+        for i in range(n):
+            for j in range(n):
+                for ship in fleet:
+                    if pg.rect.Rect(grid_coords[i+1][j+1][0],grid_coords[i+1][j+1][1],CELL_SIZE[0],CELL_SIZE[1]).colliderect(ship.image_rect):
+                        game_logic[i][j] = 1
+        for row in game_logic:
+            print(row)
+        print()
+        return game_logic
+
 
 
 

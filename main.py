@@ -11,7 +11,7 @@ if __name__ == "__main__":
     pg.display.set_caption("Battleships game")
     background = pg.image.load(MENU_IMAGE_PATH)
     background = pg.transform.scale(background,(WIN_SIZE[0]//3*2,WIN_SIZE[1]))
-    button = pg.image.load('assets/button.png')
+    button = pg.image.load('assets/buttons/button.png')
     button = pg.transform.scale(button,(WIN_SIZE[0]//3,WIN_SIZE[0]//3))
     button_rect = button.get_rect()
     button_width = button.get_width()
