@@ -2,6 +2,8 @@ import pygame as pg
 from grid import Grid
 from ship import Ship
 from wrapper import Wrapper
+import random
+
 
 WIN_SIZE = (1280, 720)
 GRID_SIZE = (550, 550)
@@ -45,6 +47,9 @@ class Game(Wrapper):
                             ship.active = True
                             ship.drag_ship(self)
                             pg.display.update()
+                elif event.type == pg.KEYDOWN:
+                    self.randomize_ships(self.fleet, self.left_grid.grid_cells_coords)
+                    self.update_screen()
 
     def get_images(self):
         self.ocean_image = self.load_image("assets/grids/ocean_grid.png")
@@ -80,4 +85,33 @@ class Game(Wrapper):
         self.get_images()
         self.draw_fleet()
         pg.display.update()
+
+    def randomize_ships(self,fleet,grid):
+        placed_ships = []
+        for ship in fleet:
+            valid_position = False
+            while not valid_position:
+                ship.default_position()
+                rotate = random.choice([True,False])
+                if rotate:
+                    y = random.randint(1, 10)
+                    x = random.randint(1,10-(ship.h_image.get_width()//CELL_SIZE[1]))
+                    ship.rotate_ship()
+                else:
+                    y = random.randint(1,10-(ship.h_image.get_height()//CELL_SIZE[0]))
+                    x = random.randint(1,10)
+                ship.image_rect.topleft = grid[y][x]
+                ship.snap_to_grid_edge(self.left_grid.grid_cells_coords,CELL_SIZE[0])
+                ship.snap_to_grid(self.left_grid.grid_cells_coords,CELL_SIZE[0])
+                if placed_ships:
+                    for item in placed_ships:
+                        if ship.image_rect.colliderect(item.image_rect):
+                            valid_position = False
+                            break
+                        else:
+                            valid_position = True
+                else: valid_position = True
+            placed_ships.append(ship)
+
+
 
