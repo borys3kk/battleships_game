@@ -28,9 +28,10 @@ FLEET = {
     'rescue ship': ['rescue ship', 'assets/ships/rescue ship/rescue ship.png', (500, 600), (20, 95), 2]
 }
 
+
 # player opponent board values
 # 0 - water -> 2
-# 1 - ship -> 3
+# S - ship -> 3
 # 2 - missed in water -> None
 # 3 - ship - hit -> None
 
@@ -56,7 +57,11 @@ class Game(Wrapper):
         self.running = True
         self.game_started = False
 
-        self.start_button = pg.Rect(20, 20, 40, 40)
+        self.font = pg.font.Font('freesansbold.ttf', 15)
+        #self.start_button = pg.Rect(20, 20, 40, 40)
+        #self.start_button.center = (WIN_SIZE[0]//2, WIN_SIZE[1]//2)
+        self.start_text = self.font.render('Start',True,(0,0,0),(255,255,255))
+        self.start_button = self.start_text.get_rect()
         self.start_button.center = (WIN_SIZE[0]//2, WIN_SIZE[1]//2)
 
         self.player_board = []
@@ -105,7 +110,7 @@ class Game(Wrapper):
                         shot = self.get_grid_coords(self.right_grid, pg.mouse.get_pos())
                         print(shot)
                         if self.check_valid_shot(self.opponent_board, shot):
-                            self.shoot(self.opponent_board, shot)
+                            self.shoot(self.opponent_board, shot,self.right_grid.grid_cells_coords)
                             self.change_turn()
                             self.print_board(self.opponent_board)
 
@@ -116,7 +121,7 @@ class Game(Wrapper):
                     sleep(randint(5, 15)//10) # so its more 'human'
                     shot = self.possible_choices_computer[-1]
                     if self.check_valid_shot(self.player_board, shot):
-                        self.shoot(self.player_board, shot)
+                        self.shoot(self.player_board, shot,self.left_grid.grid_cells_coords)
                         self.change_turn()
                         
                         if self.all_destroyed(self.fleet):
@@ -138,15 +143,19 @@ class Game(Wrapper):
                 print(str(c), end=' ')
             print()
 
-    def shoot(self, board, shot):
+    def shoot(self, board, shot,grid_coords):
         self.shot_sound.play()
+        x, y = grid_coords[shot[0]+1][shot[1]+1]
         if board[shot[0]][shot[1]] == 0:
             board[shot[0]][shot[1]] = 2
+            pg.draw.rect(self.screen,(255,0,0),pg.Rect(x,y,50,50))
             self.miss_sound.play()
         elif isinstance(board[shot[0]][shot[1]], Ship):
             board[shot[0]][shot[1]].handle_shot()
             board[shot[0]][shot[1]] = 3
             self.hit_sound.play()
+            pg.draw.rect(self.screen, (0, 255, 0), pg.Rect(x, y, 50, 50))
+        pg.display.update()
 
     def change_turn(self):
         self.turn = (self.turn + 1) % 2
@@ -154,7 +163,8 @@ class Game(Wrapper):
     def load_images(self):
         self.ocean_image = self.load_image_from_disk("assets/grids/ocean_grid.png")
         self.radar_image = self.load_image_from_disk("assets/grids/radar_grid.png")
-    
+
+
     def draw_grid(self):
         self.screen.blit(self.ocean_image, TOP_LEFT_GRID_LEFT)
         self.screen.blit(self.radar_image, TOP_LEFT_GRID_RIGHT)
