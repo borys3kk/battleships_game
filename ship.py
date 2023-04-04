@@ -4,7 +4,7 @@ from grid import Grid
 
 
 class Ship(Wrapper):
-    def __init__(self, name, path, top_left, size):
+    def __init__(self, name, path, top_left, size, ship_length):
         super().__init__()
         self.name = name
         self.active = False
@@ -18,26 +18,41 @@ class Ship(Wrapper):
         self.image = self.v_image
         self.image_rect = self.v_image_rect
         self.rotated = False
+        self.no_hits = 0
+        self.ship_length = ship_length
+        self.placed = False
 
+        self.destroyed = False
+    
     def load_image(self, path, size: tuple((int, int)), rotate=False):
         return super().load_image(path, size, rotate)
 
     def draw(self, screen):
         screen.blit(self.image, self.image_rect)
 
+    def handle_shot(self):
+        self.no_hits += 1
+        print(self.no_hits, self.ship_length)
+        self.destroyed = self.no_hits == self.ship_length
+
+
     def drag_ship(self, game):
         while self.active:
             self.image_rect.center = pg.mouse.get_pos()
-            game.update_screen()
             for event in pg.event.get():
-                if event.type == pg.MOUSEBUTTONDOWN:
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_1:
+                        self.rotate_ship()
+                elif event.type == pg.MOUSEBUTTONUP:
                     if not self.check_for_collisions(game.fleet):
-                        if event.button == 1:
-                            self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center
-                            self.active = False
-                        if event.button == 3:
-                            self.rotate_ship()
-                        game.update_screen()
+                        self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center
+                        self.placed = True
+                    else:
+                        self.default_position()
+                        self.placed = False
+                    self.active = False
+                game.update_screen()
+            game.update_screen()
 
     def rotate_ship(self):
         if self.rotated:
@@ -92,3 +107,9 @@ class Ship(Wrapper):
 
 
         self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center
+    
+    def __str__(self):
+        return 'S'
+
+    def __int__(self):
+        return 1
