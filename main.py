@@ -1,6 +1,6 @@
 from game import Game
 import pygame as pg
-from wrapper import Wrapper
+
 
 WIN_SIZE = (1280, 720)
 MENU_IMAGE_PATH = 'assets/backgrounds/Battleship.jpg'
@@ -29,6 +29,7 @@ if __name__ == "__main__":
                 running = False
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(pg.mouse.get_pos()):
-                    game = Game(screen)
+
+                    game = Game(screen,'computer')
                     running = False
 

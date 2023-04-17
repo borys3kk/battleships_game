@@ -111,5 +111,3 @@ class Ship(Wrapper):
     def __str__(self):
         return 'S'
 
-    # def __int__(self):
-    #     return 1
