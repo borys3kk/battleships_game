@@ -125,6 +125,7 @@ class Game(Wrapper):
 
     def shoot(self, board, shot,grid_coords):
         self.shot_sound.play()
+        sleep(1)
         x, y = grid_coords[shot[0]+1][shot[1]+1]
         if board[shot[0]][shot[1]] == 0:
             board[shot[0]][shot[1]] = 2

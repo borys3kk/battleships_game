@@ -7,6 +7,11 @@ TOP_LEFT_GRID_RIGHT = (
 GRID_ROW_CNT = 11  # number of rows  (with coord marker)
 GRID_COL_CNT = 11  # number of columns (with coord marker)
 CELL_SIZE = (GRID_SIZE[0] // GRID_COL_CNT, GRID_SIZE[1] // GRID_ROW_CNT)  # size of 1 cell
+HOST = '127.0.0.1'
+PORT = 33000
+MENU_IMAGE_PATH = 'assets/backgrounds/Battleship.jpg'
+
+
 # FLEET = {
 #     'battleship': ['battleship', 'assets/ships/battleship/battleship.png', (125, 600), (40, 195), 4],
 #     'cruiser': ['cruiser', 'assets/ships/cruiser/cruiser.png', (200, 600), (40, 195), 4],
