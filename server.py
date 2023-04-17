@@ -1,23 +1,24 @@
 import socket
+import pickle
+from player import Player
 
 HOST = '127.0.0.1'
 PORT = 33000
 users = 0
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((HOST, PORT))
-s.listen(2)
-client_socket1 = False
-client_socket2 = False
+# TODO SZYMON ogarnąc serwer
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    print("-------------SERVER STARTED-------------")
+    try:
+        s.bind((HOST, PORT))
+    except socket.error as e:
+        str(e)
+    
+    s.listen(2)
 
-while not client_socket1:
-    client_socket1, address = s.accept()
-    print(address)
-
-while not client_socket2:
-    client_socket2, address = s.accept()
-    print(address)
-
-
-
+    client_socket1, address1 = s.accept()
+    client_socket2, address2 = s.accept()
+    while True:
+        print(client_socket1.recv(1024))
+        print(address1, address2)
 

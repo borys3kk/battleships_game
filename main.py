@@ -21,9 +21,14 @@ if __name__ == "__main__":
     screen.blit(button,button_rect)
     pg.display.update()
     running = True
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((HOST,PORT))
-    client_socket.send("Close".encode())
+    # client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # try:
+    #     client_socket.connect((HOST,PORT))
+    #     client_socket.send("Close".encode())
+    # except ConnectionRefusedError:
+    #     print("no server")
+
+    # TODO Piotr zrobić menu głowne (wybór czy chcemy z komputerem czy z przeciwnikiem)
 
     while running:
         for event in pg.event.get():
@@ -34,6 +39,6 @@ if __name__ == "__main__":
 
                     game = Game(screen,'computer')
 
-                    client_socket.close()
+                    # client_socket.close()
                     running = False
 

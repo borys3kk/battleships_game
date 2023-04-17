@@ -44,7 +44,7 @@ class Ship(Wrapper):
                     if event.key == pg.K_1:
                         self.rotate_ship()
                 elif event.type == pg.MOUSEBUTTONUP:
-                    if not self.check_for_collisions(game.fleet):
+                    if not self.check_for_collisions(game.player.fleet):
                         self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center
                         self.placed = True
                     else:

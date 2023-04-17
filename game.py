@@ -8,7 +8,7 @@ from random import randint, shuffle
 from time import sleep
 from player import Player
 from constants import *
-
+import socket
 
 
 
@@ -125,7 +125,6 @@ class Game(Wrapper):
 
     def shoot(self, board, shot,grid_coords):
         self.shot_sound.play()
-        sleep(1)
         x, y = grid_coords[shot[0]+1][shot[1]+1]
         if board[shot[0]][shot[1]] == 0:
             board[shot[0]][shot[1]] = 2
@@ -134,8 +133,8 @@ class Game(Wrapper):
         elif isinstance(board[shot[0]][shot[1]], Ship):
             board[shot[0]][shot[1]].handle_shot()
             board[shot[0]][shot[1]] = 3
-            self.hit_sound.play()
             pg.draw.rect(self.screen, (0, 255, 0), pg.Rect(x, y, 50, 50))
+            self.hit_sound.play()
         pg.display.update()
 
     def change_turn(self):
