@@ -8,10 +8,9 @@ GRID_ROW_CNT = 11  # number of rows  (with coord marker)
 GRID_COL_CNT = 11  # number of columns (with coord marker)
 CELL_SIZE = (GRID_SIZE[0] // GRID_COL_CNT, GRID_SIZE[1] // GRID_ROW_CNT)  # size of 1 cell
 HOST = '127.0.0.1'
-PORT = 33000
+PORT = 65432
 MENU_IMAGE_PATH = 'assets/backgrounds/Battleship.jpg'
 START_SHIP_Y = TOP_LEFT_GRID_LEFT[1] + GRID_SIZE[1] + 20
-
 
 FLEET = {
     'battleship': ['battleship', 'assets/ships/battleship/battleship.png', (125,START_SHIP_Y ), (40, 195), 4],

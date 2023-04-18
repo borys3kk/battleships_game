@@ -35,11 +35,11 @@ if __name__ == "__main__":
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if buttons[0].click(pg.mouse.get_pos()):
 
-                    game = Game(screen,'computer')
+                    game = Game(screen, "computer")
 
                     # client_socket.close()
                     running = False
                 elif buttons[1].click(pg.mouse.get_pos()):
-                    #start game with player
+                    game = Game(screen, "player")
                     running = False
 

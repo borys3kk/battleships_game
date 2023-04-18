@@ -3,12 +3,19 @@ import pygame as pg
 import random
 from constants import *
 
+n = GRID_COL_CNT-1
 
 class Player:
-    def __init__(self,game):
-        self.fleet = self.create_fleet()
-        self.game = game
-
+    def __init__(self):
+        # self.fleet = self.create_fleet()
+        self.lost = False
+        self.won = False
+        self.board = []
+        self.ready = False
+        self.last_shot = None
+        self.player_name = 2
+        self.board_to_send = [[0 for _ in range(n)] for _ in range(n)]
+        
     def create_fleet(self):
         fleet = []
         for name in FLEET.keys():
@@ -21,12 +28,16 @@ class Player:
 
         return fleet
 
-    def make_attack(self):
-        shot = self.game.get_grid_coords(self.game.right_grid, pg.mouse.get_pos())
-        if self.game.check_valid_shot(self.game.opponent_board, shot):
-            self.game.shoot(self.game.opponent_board, shot, self.game.right_grid.grid_cells_coords)
-            self.game.change_turn()
-            self.game.print_board(self.game.opponent_board)
+    def update_board(self):
+        for i in range(n):
+            for j in range(n):
+                self.board_to_send[i][j] = str(self.board[i][j])
+        print(self.board_to_send)
+
+    def make_attack(self, shot, game):
+        game.shoot(game.opponent_board, shot, game.right_grid.grid_cells_coords)
+        game.change_turn()
+        game.print_board(game.opponent_board)
 
     def randomize_ships(self,fleet,grid):
         placed_ships = []

@@ -45,7 +45,7 @@ class Ship(Wrapper):
                     if event.key == pg.K_1:
                         self.rotate_ship()
                 elif event.type == pg.MOUSEBUTTONUP:
-                    if not self.check_for_collisions(game.player.fleet):
+                    if not self.check_for_collisions(game.player.fleet) and self.on_grid(pg.mouse.get_pos()):
                         self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center
                         self.snap_to_grid_edge(game.left_grid.grid_cells_coords, CELL_SIZE[0])
                         self.snap_to_grid(game.left_grid.grid_cells_coords, CELL_SIZE[0])
@@ -56,6 +56,11 @@ class Ship(Wrapper):
                     self.active = False
                 game.update_screen()
             # game.update_screen()
+
+    def on_grid(self, mouse_pos):
+        return  TOP_LEFT_GRID_LEFT[0] + CELL_SIZE[0] < mouse_pos[0] < TOP_LEFT_GRID_LEFT[0] + GRID_SIZE[0] and \
+            TOP_LEFT_GRID_LEFT[1] + CELL_SIZE[1] < mouse_pos[1] <TOP_LEFT_GRID_LEFT[1] + GRID_SIZE[1]
+
 
     def rotate_ship(self):
         if self.rotated:
@@ -79,7 +84,7 @@ class Ship(Wrapper):
         self.image_rect.topleft = self.top_left
         self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center
 
-    def snap_to_grid_edge(self, grid_coords, cell_size):
+    def snap_to_grid_edge(self, grid_coords, cell_size): # XDDD
         if self.image_rect.topleft != self.top_left:
 
             if self.image_rect.left > grid_coords[1][-1][0] + cell_size or \

@@ -9,7 +9,7 @@ from constants import *
 class Computer:
     def __init__(self, game):
         self.fleet = self.create_fleet()
-        self.game = game
+        
         self.possible_choices_computer = [(i, j) for i in range(10) for j in range(10)]
         random.shuffle(self.possible_choices_computer)
 
@@ -26,11 +26,11 @@ class Computer:
 
         return fleet
 
-    def make_attack(self):
+    def make_attack(self, game):
         sleep(random.randint(10, 15) // 10)  # so its more 'human'
         shot = self.possible_choices_computer.pop()
-        self.game.shoot(self.game.player_board, shot, self.game.left_grid.grid_cells_coords)
-        self.game.change_turn()
+        game.shoot(game.player.player_board, shot, game.left_grid.grid_cells_coords)
+        game.change_turn()
 
     def randomize_ships(self,fleet,grid):
         placed_ships = []

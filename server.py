@@ -1,24 +1,44 @@
+from random import choice
 import socket
 import pickle
-from player import Player
+from constants import HOST, PORT
+import time
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((HOST, PORT))
+s.listen(2)
+print("-----------------SERVER STARTED-----------------")
 
-HOST = '127.0.0.1'
-PORT = 33000
-users = 0
+whose_turn = choice([True, False])
+print(whose_turn)
 
-# TODO SZYMON ogarnąc serwer
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    print("-------------SERVER STARTED-------------")
-    try:
-        s.bind((HOST, PORT))
-    except socket.error as e:
-        str(e)
-    
-    s.listen(2)
+conn1, addr1 = s.accept()
+print(f"connected by: {addr1}")
+# while True:
+#     conn1.send(pickle.dumps("wait"))
+#     print("xdd")
+#     conn2, addr2 = s.accept()
+#     if conn2:
+#         print(f"connected by: {addr2}")
+#         conn1.send(pickle.dumps("okay"))
+#         conn2.send(pickle.dumps("okay"))
+#         break
 
-    client_socket1, address1 = s.accept()
-    client_socket2, address2 = s.accept()
-    while True:
-        print(client_socket1.recv(1024))
-        print(address1, address2)
 
+# time.sleep(1)
+# conn2.send(pickle.dumps(not whose_turn))
+# conn1.send(pickle.dumps(whose_turn))
+while True:
+    data = conn1.recv(2048 * 8)
+    # data1 = conn2.recv(2048 * 16)
+    data1 = True
+    if not data or not data1:
+        conn1.close()
+        # conn2.close()
+        break
+    print(pickle.loads(data))
+    # print(pickle.loads(data1))
+    # conn1.send(data1)
+    # conn2.send(data)
+
+
+print("-----------------SERVER STOPPED-----------------")

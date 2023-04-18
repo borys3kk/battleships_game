@@ -3,6 +3,7 @@ from grid import Grid
 from ship import Ship
 from computer import Computer
 from wrapper import Wrapper
+from network import Network
 from numpy import abs
 from random import randint, shuffle
 from time import sleep
@@ -10,7 +11,7 @@ from player import Player
 from constants import *
 from button import Button
 import socket
-
+import PySimpleGUI as sg
 
 # player opponent board values
 # 0 - water -> 2
@@ -23,24 +24,37 @@ class Game(Wrapper):
         super().__init__()
         self.screen = screen
         pg.display.set_caption("Battleships game")
+        self.network = Network()
 
         # Images 
         self.load_images()
         self.left_grid = Grid(TOP_LEFT_GRID_LEFT, GRID_ROW_CNT, GRID_COL_CNT, CELL_SIZE)
         self.right_grid = Grid(TOP_LEFT_GRID_RIGHT, GRID_ROW_CNT, GRID_COL_CNT, CELL_SIZE)
-        # self.fleet = self.create_fleet()
-        self.player = Player(self)
+
+        self.player_turn = 1
+
+        # Create players
+        self.player = Player()
+
         if type == 'computer':
-            self.opponent = Computer(self)
+            self.opponent = Computer()
+            self.opponent_fleet = self.opponent.create_fleet()
+            self.opponent_board = []
         else:
-            self.opponent = Player(self)
+            self.network.connect()
+            # while self.network.receive() != "okay":
+            #     print("waiting")
+            self.network.send(self.player)
+            return
+            # self.opponent = self.network.receive()
+            # self.player_turn = self.network.receive()
+            # print(self.player_turn)
 
         # Sounds
         self.shot_sound = pg.mixer.Sound("assets/sounds/gunshot.wav")
         self.hit_sound = pg.mixer.Sound("assets/sounds/explosion.wav")
         self.miss_sound = pg.mixer.Sound("assets/sounds/splash.wav")
 
-        self.opponent_fleet = self.opponent.create_fleet()
 
         self.running = True
         self.game_started = False
@@ -48,12 +62,11 @@ class Game(Wrapper):
         self.start_button = Button("Start", TOP_LEFT_GRID_RIGHT[0], TOP_LEFT_GRID_RIGHT[1] + GRID_SIZE[1] + 20,
                                    (255, 255, 255), 200,100)
 
-        self.player_board = []
-        self.opponent_board = []
-        self.turn = 1
+        # self.player_board = []
 
         self.update_screen()
         self.clock = pg.time.Clock()
+
         while self.running:
             self.clock.tick(60)
             for event in pg.event.get():
@@ -68,11 +81,14 @@ class Game(Wrapper):
                                 self.update_screen()
                     if self.start_button.click(pg.mouse.get_pos()):
                         if self.all_placed():
-                            self.player_board = self.create_game_logic(self.player.fleet,
+                            self.player.board = self.create_game_logic(self.player.fleet,
                                                                        self.left_grid.grid_cells_coords)
-                            self.start_game()
+                            if type == "computer":
+                                self.start_game()
+                            else:
+                                self.start_game_on_server()
                         else:
-                            print("error, not all ships have been placed")
+                            sg.Popup("Not all ships have been places, press r to place them randomly!", title="Error")
                     else:
                         self.get_grid_coords(self.right_grid, pg.mouse.get_pos())
                 elif event.type == pg.KEYDOWN:
@@ -80,11 +96,13 @@ class Game(Wrapper):
                         self.player.randomize_ships(self.player.fleet, self.left_grid.grid_cells_coords)
                         self.update_screen()
 
-    def start_game(self):
+
+    def start_game_on_server(self):
+        n = GRID_COL_CNT - 1
+        self.opponent.board = [[0 for _ in range(n)] for _ in range(n)]
         self.game_started = True
-        self.update_screen()
-        self.opponent.randomize_ships(self.opponent_fleet, self.right_grid.grid_cells_coords)
-        self.opponent_board = self.create_game_logic(self.opponent_fleet, self.right_grid.grid_cells_coords)
+        self.opponent.board = self.network.receive()
+        self.opponent.update_board()
         while self.game_started:
             self.clock.tick(60)
             for event in pg.event.get():
@@ -92,21 +110,39 @@ class Game(Wrapper):
                     self.running = False
                     self.game_started = False
                 if event.type == pg.MOUSEBUTTONDOWN:
-                    if self.turn:
+                    if self.player_turn:
+                        shot = self.get_grid_coords(self.right_grid, pg.mouse.get_pos())
+                        if self.check_valid_shot(self.opponent.board, shot):
+                            self.player.make_attack(shot)
+
+
+    def start_game(self):
+        self.game_started = True
+        self.update_screen()
+        self.opponent.randomize_ships(self.opponent_fleet, self.right_grid.grid_cells_coords)
+        self.opponent.opponent_board = self.create_game_logic(self.opponent_fleet, self.right_grid.grid_cells_coords)
+        while self.game_started:
+            self.clock.tick(60)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    self.running = False
+                    self.game_started = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if self.player_turn:
                         shot = self.get_grid_coords(self.right_grid, pg.mouse.get_pos())
                         if self.check_valid_shot(self.opponent_board, shot):
                             self.player.make_attack()
 
                             if self.all_destroyed(self.opponent_fleet):
                                 self.game_started = False
-                                print("YOU WON!")
+                                sg.Popup("YOU WON!", title="WIN!")
                                 break
-                if not self.turn:
+                if not self.player_turn:
                     self.opponent.make_attack()
 
                     if self.all_destroyed(self.player.fleet):
                         self.game_started = False
-                        print("COMPUTER WON!")
+                        sg.Popup("COMPUTER WON :/", title="LOSS!")
 
     def check_valid_shot(self, board, shot):
         if 0 <= shot[0] <= 9 and 0 <= shot[1] <= 9:
