@@ -5,7 +5,7 @@ from computer import Computer
 from wrapper import Wrapper
 from network import Network
 from numpy import abs
-from random import randint, shuffle
+from random import randint, shuffle, choice
 from time import sleep
 from player import Player
 from constants import *
@@ -31,15 +31,13 @@ class Game(Wrapper):
         self.left_grid = Grid(TOP_LEFT_GRID_LEFT, GRID_ROW_CNT, GRID_COL_CNT, CELL_SIZE)
         self.right_grid = Grid(TOP_LEFT_GRID_RIGHT, GRID_ROW_CNT, GRID_COL_CNT, CELL_SIZE)
 
-        self.player_turn = 1
+        self.player_turn = choice([True, False])
 
         # Create players
         self.player = Player()
 
         if type == 'computer':
             self.opponent = Computer()
-            self.opponent_fleet = self.opponent.create_fleet()
-            self.opponent_board = []
         else:
             self.network.connect()
             # while self.network.receive() != "okay":
@@ -88,7 +86,7 @@ class Game(Wrapper):
                             else:
                                 self.start_game_on_server()
                         else:
-                            sg.Popup("Not all ships have been places, press r to place them randomly!", title="Error")
+                            sg.Popup("Not all ships have been placed, press r to place them randomly!", title="Error")
                     else:
                         self.get_grid_coords(self.right_grid, pg.mouse.get_pos())
                 elif event.type == pg.KEYDOWN:
@@ -119,8 +117,8 @@ class Game(Wrapper):
     def start_game(self):
         self.game_started = True
         self.update_screen()
-        self.opponent.randomize_ships(self.opponent_fleet, self.right_grid.grid_cells_coords)
-        self.opponent.opponent_board = self.create_game_logic(self.opponent_fleet, self.right_grid.grid_cells_coords)
+        self.opponent.randomize_ships(self.opponent.fleet, self.right_grid.grid_cells_coords)
+        self.opponent.board = self.create_game_logic(self.opponent.fleet, self.right_grid.grid_cells_coords)
         while self.game_started:
             self.clock.tick(60)
             for event in pg.event.get():
@@ -130,15 +128,15 @@ class Game(Wrapper):
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if self.player_turn:
                         shot = self.get_grid_coords(self.right_grid, pg.mouse.get_pos())
-                        if self.check_valid_shot(self.opponent_board, shot):
-                            self.player.make_attack()
+                        if self.check_valid_shot(self.opponent.board, shot):
+                            self.player.make_attack(shot, self)
 
-                            if self.all_destroyed(self.opponent_fleet):
+                            if self.all_destroyed(self.opponent.fleet):
                                 self.game_started = False
                                 sg.Popup("YOU WON!", title="WIN!")
                                 break
                 if not self.player_turn:
-                    self.opponent.make_attack()
+                    self.opponent.make_attack(self)
 
                     if self.all_destroyed(self.player.fleet):
                         self.game_started = False
@@ -157,6 +155,7 @@ class Game(Wrapper):
             print()
 
     def shoot(self, board, shot, grid_coords):
+        # TODO add tokens instead of pg rect
         self.shot_sound.play()
         x, y = grid_coords[shot[0] + 1][shot[1] + 1]
         if board[shot[0]][shot[1]] == 0:
@@ -171,7 +170,7 @@ class Game(Wrapper):
         pg.display.update()
 
     def change_turn(self):
-        self.turn = (self.turn + 1) % 2
+        self.player_turn = not self.player_turn
 
     def load_images(self):
         self.ocean_image = self.load_image_from_disk("assets/grids/ocean_grid.png")
@@ -200,22 +199,21 @@ class Game(Wrapper):
                              rotate=False):  # we dont need to pass size here because its already declared as constant
         return super().load_image(path, GRID_SIZE, rotate)
 
-    def create_fleet(self):
-        fleet = []
-        for name in FLEET.keys():
-            fleet.append(Ship(name,
-                              FLEET[name][1],
-                              FLEET[name][2],
-                              FLEET[name][3],
-                              FLEET[name][4]
-                              ))
+    # def create_fleet(self):
+    #     fleet = []
+    #     for name in FLEET.keys():
+    #         fleet.append(Ship(name,
+    #                           FLEET[name][1],
+    #                           FLEET[name][2],
+    #                           FLEET[name][3],
+    #                           FLEET[name][4]
+    #                           ))
 
-        return fleet
+    #     return fleet
 
     def draw_fleet(self):
         for ship in self.player.fleet:
             ship.draw(self.screen)
-        # pg.display.update()
 
     def update_screen(self):
         self.screen.fill((0, 0, 0))

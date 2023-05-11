@@ -1,7 +1,6 @@
 from wrapper import Wrapper
 import pygame as pg
 from constants import *
-from grid import Grid
 
 
 class Ship(Wrapper):
@@ -22,7 +21,6 @@ class Ship(Wrapper):
         self.no_hits = 0
         self.ship_length = ship_length
         self.placed = False
-
         self.destroyed = False
     
     def load_image(self, path, size: tuple((int, int)), rotate=False):
@@ -33,7 +31,6 @@ class Ship(Wrapper):
 
     def handle_shot(self):
         self.no_hits += 1
-        print(self.no_hits, self.ship_length)
         self.destroyed = self.no_hits == self.ship_length
 
 

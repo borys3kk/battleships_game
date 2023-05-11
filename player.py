@@ -7,14 +7,13 @@ n = GRID_COL_CNT-1
 
 class Player:
     def __init__(self):
-        # self.fleet = self.create_fleet()
+        self.fleet = self.create_fleet()
         self.lost = False
         self.won = False
         self.board = []
         self.ready = False
         self.last_shot = None
         self.player_name = 2
-        self.board_to_send = [[0 for _ in range(n)] for _ in range(n)]
         
     def create_fleet(self):
         fleet = []
@@ -27,17 +26,15 @@ class Player:
                               ))
 
         return fleet
-
-    def update_board(self):
-        for i in range(n):
-            for j in range(n):
-                self.board_to_send[i][j] = str(self.board[i][j])
-        print(self.board_to_send)
+    
+    def convert_board(self):
+        return []
+        # return [[str(self.board[j][i]) if self.board[j][i].isinstance(Ship) else 'W' for i in range(len(self.board))] for j in range(len(self.board))]
 
     def make_attack(self, shot, game):
-        game.shoot(game.opponent_board, shot, game.right_grid.grid_cells_coords)
+        game.shoot(game.opponent.board, shot, game.right_grid.grid_cells_coords)
         game.change_turn()
-        game.print_board(game.opponent_board)
+        game.print_board(game.opponent.board)
 
     def randomize_ships(self,fleet,grid):
         placed_ships = []

@@ -16,10 +16,10 @@ FLEET = {
     'battleship': ['battleship', 'assets/ships/battleship/battleship.png', (125,START_SHIP_Y ), (40, 195), 4],
     'cruiser': ['cruiser', 'assets/ships/cruiser/cruiser.png', (200, START_SHIP_Y), (40, 195), 4],
     'destroyer': ['destroyer', 'assets/ships/destroyer/destroyer.png', (275, START_SHIP_Y), (30, 145), 3],
-    'patrol boat': ['patrol boat', 'assets/ships/patrol boat/patrol boat.png', (425, START_SHIP_Y), (20, 95), 2],
+    'patrol_boat': ['patrol_boat', 'assets/ships/patrol boat/patrol boat.png', (425, START_SHIP_Y), (20, 95), 2],
     'submarine': ['submarine', 'assets/ships/submarine/submarine.png', (350, START_SHIP_Y), (30, 145), 3],
     'carrier': ['carrier', 'assets/ships/carrier/carrier.png', (50, START_SHIP_Y), (45, 245), 5],
-    'rescue ship': ['rescue ship', 'assets/ships/rescue ship/rescue ship.png', (500, START_SHIP_Y), (20, 95), 2]
+    'rescue_ship': ['rescue_ship', 'assets/ships/rescue ship/rescue ship.png', (500, START_SHIP_Y), (20, 95), 2]
 }
 # FLEET = {
 #     'battleship': ['battleship', 'assets/ships/battleship/battleship.png', (125, 600), (40, 195), 4],
