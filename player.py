@@ -12,9 +12,8 @@ class Player:
         self.won = False
         self.board = []
         self.ready = False
-        self.last_shot = None
-        self.player_name = 2
-        
+        self.shots = []
+
     def create_fleet(self):
         fleet = []
         for name in FLEET.keys():
@@ -26,15 +25,11 @@ class Player:
                               ))
 
         return fleet
-    
-    def convert_board(self):
-        return []
-        # return [[str(self.board[j][i]) if self.board[j][i].isinstance(Ship) else 'W' for i in range(len(self.board))] for j in range(len(self.board))]
+    def make_shots(self):
+        self.shots = [[0 for i in range(len(self.board))] for j in range(len(self.board))]
 
-    def make_attack(self, shot, game):
-        game.shoot(game.opponent.board, shot, game.right_grid.grid_cells_coords)
-        game.change_turn()
-        game.print_board(game.opponent.board)
+    def convert_board(self):
+        return [[str(self.board[j][i]) if isinstance(self.board[j][i], Ship) else 'W' for i in range(len(self.board))] for j in range(len(self.board))]
 
     def randomize_ships(self,fleet,grid):
         placed_ships = []

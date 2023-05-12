@@ -1,4 +1,5 @@
-from game import Game
+from onlinegame import OnlineGame
+from localgame import LocalGame
 import pygame as pg
 from constants import *
 import socket
@@ -33,13 +34,10 @@ if __name__ == "__main__":
             if event.type == pg.QUIT:
                 running = False
             elif event.type == pg.MOUSEBUTTONDOWN:
-                if buttons[0].click(pg.mouse.get_pos()):
-
-                    game = Game(screen, "computer")
-
-                    # client_socket.close()
+                if buttons[0].click(pg.mouse.get_pos()): # game with computer
+                    game = LocalGame(screen)
                     running = False
-                elif buttons[1].click(pg.mouse.get_pos()):
-                    game = Game(screen, "player")
+                elif buttons[1].click(pg.mouse.get_pos()): # game with other player
+                    game = OnlineGame(screen)
                     running = False
 
