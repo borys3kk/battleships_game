@@ -9,9 +9,10 @@ from constants import *
 class Computer:
     def __init__(self):
         self.fleet = self.create_fleet()
-        self.possible_choices_computer = [(i, j) for i in range(10) for j in range(10)]
-        random.shuffle(self.possible_choices_computer)
+        self.possible_moves = [(i, j) for i in range(10) for j in range(10)]
+        random.shuffle(self.possible_moves)
         self.board = []
+        self.moves = []
 
 
     def create_fleet(self):
@@ -28,9 +29,29 @@ class Computer:
 
     def make_attack(self, game):
         sleep(random.randint(10, 15) // 10)  # so its more 'human'
-        shot = self.possible_choices_computer.pop()
-        game.shoot(game.player.board, shot, game.left_grid.grid_cells_coords)
+
+        # shot = self.possible_moves.pop()
+        # is_hitted = game.shoot(game.player.board, shot, game.left_grid.grid_cells_coords)
+        # game.change_turn()
+        print(self.moves)
+        if len(self.moves) > 0:
+            random.shuffle(self.moves)
+            x,y = self.moves.pop()
+            is_hit = game.shoot(game.player.board,(x,y),game.left_grid.grid_cells_coords)
+            self.possible_moves.remove((x,y))
+
+        else:
+            x,y = self.possible_moves.pop()
+            is_hit = game.shoot(game.player.board, (x,y), game.left_grid.grid_cells_coords)
+        if is_hit:
+            self.moves = []
+
+            for direction in DIRECTIONS:
+                print((x + direction[0], y + direction[1]))
+                if (x + direction[0], y + direction[1]) in self.possible_moves:
+                    self.moves.append((x + direction[0], y + direction[1]))
         game.change_turn()
+
 
     def randomize_ships(self, fleet, grid):
         placed_ships = []

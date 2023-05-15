@@ -23,6 +23,8 @@ FLEET = {
     'carrier': ['carrier', 'assets/ships/carrier/carrier.png', (50, START_SHIP_Y), (45, 245), 5],
     'rescue_ship': ['rescue_ship', 'assets/ships/rescue ship/rescue ship.png', (500, START_SHIP_Y), (20, 95), 2]
 }
+
+DIRECTIONS = [(1,0),(-1,0),(0,1),(0,-1)]
 # FLEET = {
 #     'battleship': ['battleship', 'assets/ships/battleship/battleship.png', (125, 600), (40, 195), 4],
 #     'cruiser': ['cruiser', 'assets/ships/cruiser/cruiser.png', (200, 600), (40, 195), 4]
