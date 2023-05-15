@@ -50,6 +50,9 @@ class Game(Wrapper):
         self.update_screen()
         self.clock = pg.time.Clock()
 
+        self.get_ready()
+        
+    def get_ready(self):
         while self.running:
             self.clock.tick(60)
             for event in pg.event.get():
@@ -75,6 +78,8 @@ class Game(Wrapper):
                     if event.key == pg.K_r and not self.game_started:
                         self.player.randomize_ships(self.player.fleet, self.left_grid.grid_cells_coords)
                         self.update_screen()
+
+
 
     def check_valid_shot(self, board, shot):
         pass
@@ -157,6 +162,6 @@ class Game(Wrapper):
         return game_logic
 
     def get_grid_coords(self, grid: Grid, mouse_pos):  # get grid coords for shooting (pew pew)
-        i = abs(grid.top_left_corner[0] - mouse_pos[0]) // CELL_SIZE[0]
-        j = abs(grid.top_left_corner[1] - mouse_pos[1]) // CELL_SIZE[1]
+        i = -(grid.top_left_corner[0] - mouse_pos[0]) // CELL_SIZE[0]
+        j = -(grid.top_left_corner[1] - mouse_pos[1]) // CELL_SIZE[1]
         return j - 1, i - 1

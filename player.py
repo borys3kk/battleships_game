@@ -27,6 +27,7 @@ class Player:
         return fleet
     def make_shots(self):
         self.shots = [[0 for i in range(len(self.board))] for j in range(len(self.board))]
+        
 
     def convert_board(self):
         return [[str(self.board[j][i]) if isinstance(self.board[j][i], Ship) else 'W' for i in range(len(self.board))] for j in range(len(self.board))]

@@ -13,12 +13,13 @@ class Network:
         try:
             self.client.connect(self.addr)
         except:
-            pass
+            print("not connected")
     
     def send(self, data):
         try:
             data_to_send = pickle.dumps(data)
-            self.client.sendall(data_to_send)
+            self.client.send(data_to_send)
+            print("data succesfully sent")
         except socket.error as e:
             print (str(e))
     

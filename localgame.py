@@ -14,9 +14,7 @@ class LocalGame(Game):
         self.text_rect = self.turn_text.get_rect()
         self.text_rect.center = (TEXT_POSITION[0], TEXT_POSITION[1])
 
-        print(":before")
         super().__init__(screen)
-        print("after")
 
 
     def start_game(self):
@@ -64,6 +62,7 @@ class LocalGame(Game):
         if 0 <= shot[0] <= 9 and 0 <= shot[1] <= 9:
             if board[shot[0]][shot[1]] == 0 or isinstance(board[shot[0]][shot[1]], Ship):
                 return True
+        print("not valid")
         return False
 
     def make_attack(self, shot):
