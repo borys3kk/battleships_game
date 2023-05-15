@@ -11,7 +11,9 @@ HOST = '127.0.0.1'
 PORT = 65432
 MENU_IMAGE_PATH = 'assets/backgrounds/Battleship.jpg'
 START_SHIP_Y = TOP_LEFT_GRID_LEFT[1] + GRID_SIZE[1] + 20
-
+TEXT_POSITION = (WIN_SIZE[0]//2, 20)
+BUTTON_POSITION = (TOP_LEFT_GRID_RIGHT[0], TOP_LEFT_GRID_RIGHT[1] + GRID_SIZE[1] + 20)
+HELP_POSITION = (TOP_LEFT_GRID_RIGHT[0] + CELL_SIZE[0] * 5, BUTTON_POSITION[1])
 FLEET = {
     'battleship': ['battleship', 'assets/ships/battleship/battleship.png', (125,START_SHIP_Y ), (40, 195), 4],
     'cruiser': ['cruiser', 'assets/ships/cruiser/cruiser.png', (200, START_SHIP_Y), (40, 195), 4],

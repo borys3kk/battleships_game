@@ -12,7 +12,7 @@ from constants import *
 from button import Button
 import socket
 import PySimpleGUI as sg
-from threading import Thread
+from threading import Thread # will use it later
 # player opponent board values
 # 0 - water -> 2
 # S - ship -> 3
@@ -39,9 +39,10 @@ class Game(Wrapper):
         self.running = True
         self.game_started = False
 
-        self.start_button = Button("Start", TOP_LEFT_GRID_RIGHT[0], TOP_LEFT_GRID_RIGHT[1] + GRID_SIZE[1] + 20,
-                                   (255, 255, 255), 200,100)
+        self.start_button = Button("Start", BUTTON_POSITION[0], BUTTON_POSITION[1], (255, 255, 255), 200,100)
 
+        self.help_font = pg.font.SysFont("comicsans", 30)
+        
         self.update_screen()
         self.clock = pg.time.Clock()
 
@@ -117,6 +118,9 @@ class Game(Wrapper):
     def draw_fleet(self):
         for ship in self.player.fleet:
             ship.draw(self.screen)
+            
+    def update_round_text(self):
+        pass
 
     def update_screen(self):
         self.screen.fill((0, 0, 0))
@@ -124,7 +128,18 @@ class Game(Wrapper):
         self.draw_fleet()
         if not self.game_started:
             self.draw_button()
+            self.show_help()
         pg.display.update()
+
+    def show_help(self):
+        line_1 = "            HELP"
+        line_2 = "1 - rotate current ship"
+        line_3 = "r - place ships randomly"
+        lines = [line_1, line_2, line_3]
+        for idx, line in enumerate(lines):
+            text = self.help_font.render(line, True, (255, 255, 255))
+            self.screen.blit(text, (HELP_POSITION[0], HELP_POSITION[1] + idx * 30))
+
 
     def create_game_logic(self, fleet, grid_coords):
         n = GRID_COL_CNT - 1

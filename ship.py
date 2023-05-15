@@ -66,7 +66,7 @@ class Ship(Wrapper):
         else:
             self.image = self.h_image
             self.image_rect = self.h_image_rect
-        self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center
+        self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center = pg.mouse.get_pos()
         self.rotated = not self.rotated
 
     def check_for_collisions(self, fleet):

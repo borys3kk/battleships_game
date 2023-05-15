@@ -5,12 +5,22 @@ class LocalGame(Game):
         self.player = Player()
         self.opponent = Computer()
         self.player_turn = choice([True, False])
+        
+        self.your_turn =     "                 Your turn!                   "
+        self.computer_turn = "Waiting for computer's turn!"
+
+        self.font = pg.font.SysFont("comicsans", 40)
+        self.turn_text = self.font.render(self.your_turn if self.player_turn else self.computer_turn, True, (255, 255, 255))
+        self.text_rect = self.turn_text.get_rect()
+        self.text_rect.center = (TEXT_POSITION[0], TEXT_POSITION[1])
+        print(":before")
         super().__init__(screen)
-    
+        print("after")
 
     def start_game(self):
         self.game_started = True
         self.update_screen()
+        self.update_round_text()
         self.opponent.randomize_ships(self.opponent.fleet, self.right_grid.grid_cells_coords)
         self.opponent.board = self.create_game_logic(self.opponent.fleet, self.right_grid.grid_cells_coords)
         while self.game_started:
@@ -36,8 +46,17 @@ class LocalGame(Game):
                         self.game_started = False
                         sg.Popup("COMPUTER WON :/", title="LOSS!", keep_on_top=True)
 
+    def update_round_text(self):
+        self.screen.fill(pg.Color("black"), self.text_rect)
+        self.turn_text = self.font.render(self.your_turn if self.player_turn else self.computer_turn, True, (255, 255, 255))
+        self.text_rect = self.turn_text.get_rect()
+        self.text_rect.center = (TEXT_POSITION[0], TEXT_POSITION[1])
+        self.screen.blit(self.turn_text, self.text_rect)
+        pg.display.update(self.text_rect)
+
     def change_turn(self):
         self.player_turn = not self.player_turn
+        self.update_round_text()
     
     def check_valid_shot(self, board, shot):
         if 0 <= shot[0] <= 9 and 0 <= shot[1] <= 9:
