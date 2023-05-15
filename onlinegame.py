@@ -24,12 +24,17 @@ class OnlineGame(Game):
     def shoot(self, board, shot, grid_coords):
         # TODO add tokens instead of pg rect
         self.shot_sound.play()
+        x, y = grid_coords[shot[0] + 1][shot[1] + 1]
         if self.serverdata.get_hit():
             self.hit_sound.play()
             board[shot[0]][shot[1]] = 'X'
+            self.blue_token_rect.topleft = (x, y)
+            self.screen.blit(self.blue_token, self.blue_token_rect)
         else:
             self.miss_sound.play()
             board[shot[0]][shot[1]] = 'W'
+            self.red_token_rect.topleft = (x, y)
+            self.screen.blit(self.red_token, self.red_token_rect)
     
     def start_game_on_server(self):
         n = GRID_COL_CNT - 1
