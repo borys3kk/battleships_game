@@ -13,9 +13,11 @@ class LocalGame(Game):
         self.turn_text = self.font.render(self.your_turn if self.player_turn else self.computer_turn, True, (255, 255, 255))
         self.text_rect = self.turn_text.get_rect()
         self.text_rect.center = (TEXT_POSITION[0], TEXT_POSITION[1])
+
         print(":before")
         super().__init__(screen)
         print("after")
+
 
     def start_game(self):
         self.game_started = True
@@ -75,12 +77,17 @@ class LocalGame(Game):
         x, y = grid_coords[shot[0] + 1][shot[1] + 1]
         if board[shot[0]][shot[1]] == 0:
             board[shot[0]][shot[1]] = 2
-            pg.draw.rect(self.screen, (255, 0, 0), pg.Rect(x, y, 50, 50))
+            #pg.draw.rect(self.screen, (255, 0, 0), pg.Rect(x, y, 50, 50))
+
+            self.blue_token_rect.topleft = (x, y)
+            self.screen.blit(self.blue_token, self.blue_token_rect)
             self.miss_sound.play()
         elif isinstance(board[shot[0]][shot[1]], Ship):
             board[shot[0]][shot[1]].handle_shot()
             board[shot[0]][shot[1]] = 3
-            pg.draw.rect(self.screen, (0, 255, 0), pg.Rect(x, y, 50, 50))
+            #pg.draw.rect(self.screen, (0, 255, 0), pg.Rect(x, y, 50, 50))
+            self.red_token_rect.topleft = (x, y)
+            self.screen.blit(self.red_token, self.red_token_rect)
             self.hit_sound.play()
         pg.display.update()
         

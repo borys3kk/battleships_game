@@ -34,7 +34,11 @@ class Game(Wrapper):
         self.shot_sound = pg.mixer.Sound("assets/sounds/gunshot.wav")
         self.hit_sound = pg.mixer.Sound("assets/sounds/explosion.wav")
         self.miss_sound = pg.mixer.Sound("assets/sounds/splash.wav")
+        self.red_token = self.load_image('assets/tokens/redtoken.png', CELL_SIZE)
+        self.red_token_rect = self.red_token.get_rect()
 
+        self.blue_token = self.load_image('assets/tokens/bluetoken.png', CELL_SIZE)
+        self.blue_token_rect = self.blue_token.get_rect()
 
         self.running = True
         self.game_started = False
