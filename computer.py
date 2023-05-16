@@ -33,7 +33,6 @@ class Computer:
         # shot = self.possible_moves.pop()
         # is_hitted = game.shoot(game.player.board, shot, game.left_grid.grid_cells_coords)
         # game.change_turn()
-        print(self.moves)
         if len(self.moves) > 0:
             random.shuffle(self.moves)
             x,y = self.moves.pop()
@@ -45,9 +44,8 @@ class Computer:
             is_hit = game.shoot(game.player.board, (x,y), game.left_grid.grid_cells_coords)
         if is_hit:
             self.moves = []
-
             for direction in DIRECTIONS:
-                print((x + direction[0], y + direction[1]))
+
                 if (x + direction[0], y + direction[1]) in self.possible_moves:
                     self.moves.append((x + direction[0], y + direction[1]))
         game.change_turn()

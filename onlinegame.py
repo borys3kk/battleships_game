@@ -29,6 +29,14 @@ class OnlineGame(Game):
         self.network.connect()
         self.cnt = 0
         self.turn = None
+        self.your_turn = "                 Your turn!                   "
+        self.computer_turn = "Opponent's turn!"
+
+        self.font = pg.font.SysFont("comicsans", 40)
+        self.turn_text = self.font.render(self.your_turn, True,
+                                          (255, 255, 255))
+        self.text_rect = self.turn_text.get_rect()
+        self.text_rect.center = (TEXT_POSITION[0], TEXT_POSITION[1])
         super().__init__(screen)
 
 
@@ -80,6 +88,7 @@ class OnlineGame(Game):
         self.game_started = True
         print("GAME STARTED")
         self.update_screen()
+        self.update_round_text()
         while self.game_started:
             self.clock.tick(60)
             for event in pg.event.get():
@@ -94,6 +103,7 @@ class OnlineGame(Game):
                         self.callback = None
                         self.thread.join()
                     self.turn = not self.turn
+                    self.update_round_text()
 
                 if event.type == pg.QUIT:
                     self.running = False
@@ -159,3 +169,11 @@ class OnlineGame(Game):
             self.blue_token_rect.topleft = (x, y)
             self.screen.blit(self.blue_token, self.blue_token_rect)
         pg.display.update()
+
+    def update_round_text(self):
+        self.screen.fill(pg.Color("black"), self.text_rect)
+        self.turn_text = self.font.render(self.your_turn if self.turn else self.computer_turn, True, (255, 255, 255))
+        self.text_rect = self.turn_text.get_rect()
+        self.text_rect.center = (TEXT_POSITION[0], TEXT_POSITION[1])
+        self.screen.blit(self.turn_text, self.text_rect)
+        pg.display.update(self.text_rect)
