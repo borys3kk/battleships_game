@@ -3,6 +3,8 @@ import socket
 import pickle
 from constants import HOST, PORT
 from threading import Thread
+from datetime import datetime
+
 class Server():
     def __init__(self):
         print("-----------------SERVER STARTED-----------------")
@@ -46,22 +48,38 @@ class Server():
     def send_data_between_clients(self):
         while True:
             if self.player_1_turn:
-                data_to_send = self.player_1_conn.recv(2048 * 2)
+                
+                current_time = datetime.now().strftime("%H:%M:%S")
+                print("Time before getting data to send in player 1 = ", current_time) 
+
+                data_to_send = self.player_1_conn.recv(1024)
                 self.player_2_conn.send(data_to_send)
-                callback = self.player_2_conn.recv(2048 * 2)
+                callback = self.player_2_conn.recv(1024)
                 self.player_1_conn.send(callback)
+
+                current_time = datetime.now().strftime("%H:%M:%S")
+                print("Time after sending callback (player two) = ", current_time) 
+
                 self.player_1_turn = not self.player_1_turn
             
             else:
-                data_to_send = self.player_2_conn.recv(2048 * 2)
-                self.player_1_conn.send(data_to_send)
-                callback = self.player_1_conn.recv(2048 * 2)
-                self.player_2_conn.send(callback)
-                self.player_1_turn = not self.player_1_turn
+                current_time = datetime.now().strftime("%H:%M:%S")
+                print("Time before getting data to send in player 2 = ", current_time) 
 
-            check_win = pickle.dumps(callback)
-            if check_win.get_game_won():
-                break
+                data_to_send = self.player_2_conn.recv(1024)
+                self.player_1_conn.send(data_to_send)
+                callback = self.player_1_conn.recv(1024)
+                self.player_2_conn.send(callback)
+                
+                current_time = datetime.now().strftime("%H:%M:%S")
+                print("Time after sending callback (player one) = ", current_time) 
+                
+                self.player_1_turn = not self.player_1_turn
+            # if callback:
+            #     check_win = pickle.dumps(callback)
+            #     print(check_win.get_game_won())
+            #     if check_win.get_game_won():
+            #         break
 
     def send_who_starts(self):
         self.player_1_conn.send(pickle.dumps(self.player_1_turn))

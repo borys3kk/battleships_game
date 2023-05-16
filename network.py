@@ -13,19 +13,18 @@ class Network:
         try:
             self.client.connect(self.addr)
         except:
-            print("not connected")
+            pass
     
     def send(self, data):
         try:
             data_to_send = pickle.dumps(data)
             self.client.send(data_to_send)
-            print("data succesfully sent")
         except socket.error as e:
             print (str(e))
     
     def receive(self):
         try:
-            data_from_server = self.client.recv(2048 * 2)
+            data_from_server = self.client.recv(1024)
             if not data_from_server:
                 return None  # if none is returned, the player wins by forfeit (or the server crashed)
             return pickle.loads(data_from_server)

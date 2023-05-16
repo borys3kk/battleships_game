@@ -20,5 +20,5 @@ class ServerData:
     def set_hit(self, hit):
         self._hit = hit
     
-    def get_hit(self, hit):
+    def get_hit(self):
         return self._hit
