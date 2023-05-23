@@ -75,11 +75,10 @@ class Server():
                 print("Time after sending callback (player one) = ", current_time) 
                 
                 self.player_1_turn = not self.player_1_turn
-            # if callback:
-            #     check_win = pickle.dumps(callback)
-            #     print(check_win.get_game_won())
-            #     if check_win.get_game_won():
-            #         break
+            if callback:
+                callback_data = pickle.loads(callback)
+                if callback_data.get_game_finished():
+                    break
 
     def send_who_starts(self):
         self.player_1_conn.send(pickle.dumps(self.player_1_turn))

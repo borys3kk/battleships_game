@@ -31,6 +31,7 @@ class Ship(Wrapper):
 
     def handle_shot(self):
         self.no_hits += 1
+        print(self.no_hits, self.ship_length)
         self.destroyed = self.no_hits == self.ship_length
 
 

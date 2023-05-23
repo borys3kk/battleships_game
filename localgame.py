@@ -68,15 +68,12 @@ class LocalGame(Game):
     def make_attack(self, shot):
         self.shoot(self.opponent.board, shot, self.right_grid.grid_cells_coords)
         self.change_turn()
-        # game.print_board(game.opponent.board)
     
     def shoot(self, board, shot, grid_coords):
-
         self.shot_sound.play()
         x, y = grid_coords[shot[0] + 1][shot[1] + 1]
         if board[shot[0]][shot[1]] == 0:
             board[shot[0]][shot[1]] = 2
-            #pg.draw.rect(self.screen, (255, 0, 0), pg.Rect(x, y, 50, 50))
             self.blue_token_rect.topleft = (x, y)
             self.screen.blit(self.blue_token, self.blue_token_rect)
             self.miss_sound.play()
@@ -85,7 +82,6 @@ class LocalGame(Game):
         elif isinstance(board[shot[0]][shot[1]], Ship):
             board[shot[0]][shot[1]].handle_shot()
             board[shot[0]][shot[1]] = 3
-            #pg.draw.rect(self.screen, (0, 255, 0), pg.Rect(x, y, 50, 50))
             self.red_token_rect.topleft = (x, y)
             self.screen.blit(self.red_token, self.red_token_rect)
             self.hit_sound.play()
