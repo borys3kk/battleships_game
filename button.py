@@ -12,7 +12,7 @@ class Button:
     def draw(self, win):
         pg.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))
         font = pg.font.SysFont("comicsans", 40)
-        text = font.render(self.text, 1, (0,0,0))
+        text = font.render(self.text, True, (0,0,0))
         win.blit(text, (self.x + round(self.width/2) - round(text.get_width()/2), self.y + round(self.height/2) - round(text.get_height()/2)))
 
     def click(self, pos):

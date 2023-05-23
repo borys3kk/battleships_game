@@ -4,6 +4,7 @@ import pygame as pg
 from constants import *
 import socket
 from button import Button
+from roommenu import RoomMenu
 
 if __name__ == "__main__":
     pg.init()
@@ -38,6 +39,6 @@ if __name__ == "__main__":
                     game = LocalGame(screen)
                     running = False
                 elif buttons[1].click(pg.mouse.get_pos()): # game with other player
-                    game = OnlineGame(screen)
+                    RoomMenu(screen)
                     running = False
 

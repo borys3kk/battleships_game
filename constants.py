@@ -30,3 +30,4 @@ DIRECTIONS = [(1,0),(-1,0),(0,1),(0,-1)]
 #     'cruiser': ['cruiser', 'assets/ships/cruiser/cruiser.png', (200, 600), (40, 195), 4]
 
 # }
+ROOMS = 5

@@ -3,19 +3,21 @@ from serverdata import ServerData
 from datetime import datetime
 from time import sleep
 from os import getpid
+
+
 class OnlineGame(Game):
     def __init__(self, screen):
         self.network = Network()
         self.game_won = False
 
         self.player = Player()
-        
+
         self.network = Network()
 
         self.data_to_send = ServerData()
         self.callback = None
         self.other_player_connected = False
-        
+
         self.once = True
 
         self.callback_thread = None
@@ -39,7 +41,6 @@ class OnlineGame(Game):
         self.text_rect.center = (TEXT_POSITION[0], TEXT_POSITION[1])
         super().__init__(screen)
 
-
     def get_ready(self):
         self.thread = Thread(target=self.wait_for_other_player)
         self.thread.start()
@@ -55,7 +56,7 @@ class OnlineGame(Game):
                     self.thread.join()
                     print("can start game :)")
                     current_time = datetime.now().strftime("%H:%M:%S")
-                    print("Current Time = ", current_time)   
+                    print("Current Time = ", current_time)
                 else:
                     if event.type == pg.QUIT:
                         self.running = False
@@ -68,14 +69,16 @@ class OnlineGame(Game):
                                     self.update_screen()
                         if self.start_button.click(pg.mouse.get_pos()):
                             if self.all_placed():
-                                self.player.board = self.create_game_logic(self.player.fleet, self.left_grid.grid_cells_coords)
+                                self.player.board = self.create_game_logic(self.player.fleet,
+                                                                           self.left_grid.grid_cells_coords)
                                 self.player.make_shots()
                                 self.network.send(True)
                                 self.turn = self.network.receive()
                                 print("YOU START: ", self.turn)
                                 self.start_game_on_server()
                             else:
-                                sg.Popup("Not all ships have been placed, press r to place them randomly!", title="Error")
+                                sg.Popup("Not all ships have been placed, press r to place them randomly!",
+                                         title="Error")
                     elif event.type == pg.KEYDOWN:
                         if event.key == pg.K_r and not self.game_started:
                             self.player.randomize_ships(self.player.fleet, self.left_grid.grid_cells_coords)
@@ -133,8 +136,8 @@ class OnlineGame(Game):
         self.callback_thread.start()
 
     def attack(self, shot):
-        self.send_attack(shot) # send shot through server
-        self.start_callback_thread() # get callback from server
+        self.send_attack(shot)  # send shot through server
+        self.start_callback_thread()  # get callback from server
 
     def send_attack(self, shot):
         # set the field in array so that we cant shot twice in the same spot
@@ -146,12 +149,12 @@ class OnlineGame(Game):
         self.data_to_send.set_hit(None)
         self.network.send(self.data_to_send)
 
-    def check_valid_shot(self, board, shot): # we only check if we have not yet shot on given position
+    def check_valid_shot(self, board, shot):  # we only check if we have not yet shot on given position
         if 0 <= shot[0] <= 9 and 0 <= shot[1] <= 9:
             if board[shot[0]][shot[1]] == 0:
                 return True
             return False
-    
+
     def shoot(self, board, shot, grid_coords):
         # TODO add tokens instead of pg rect
         print(shot)
