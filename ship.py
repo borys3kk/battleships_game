@@ -1,6 +1,6 @@
 from wrapper import Wrapper
 import pygame as pg
-from grid import Grid
+from constants import *
 
 
 class Ship(Wrapper):
@@ -21,7 +21,6 @@ class Ship(Wrapper):
         self.no_hits = 0
         self.ship_length = ship_length
         self.placed = False
-
         self.destroyed = False
     
     def load_image(self, path, size: tuple((int, int)), rotate=False):
@@ -44,15 +43,22 @@ class Ship(Wrapper):
                     if event.key == pg.K_1:
                         self.rotate_ship()
                 elif event.type == pg.MOUSEBUTTONUP:
-                    if not self.check_for_collisions(game.fleet):
+                    if not self.check_for_collisions(game.player.fleet) and self.on_grid(pg.mouse.get_pos()):
                         self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center
+                        self.snap_to_grid_edge(game.left_grid.grid_cells_coords, CELL_SIZE[0])
+                        self.snap_to_grid(game.left_grid.grid_cells_coords, CELL_SIZE[0])
                         self.placed = True
                     else:
                         self.default_position()
                         self.placed = False
                     self.active = False
                 game.update_screen()
-            game.update_screen()
+            # game.update_screen()
+
+    def on_grid(self, mouse_pos):
+        return  TOP_LEFT_GRID_LEFT[0] + CELL_SIZE[0] < mouse_pos[0] < TOP_LEFT_GRID_LEFT[0] + GRID_SIZE[0] and \
+            TOP_LEFT_GRID_LEFT[1] + CELL_SIZE[1] < mouse_pos[1] <TOP_LEFT_GRID_LEFT[1] + GRID_SIZE[1]
+
 
     def rotate_ship(self):
         if self.rotated:
@@ -61,7 +67,7 @@ class Ship(Wrapper):
         else:
             self.image = self.h_image
             self.image_rect = self.h_image_rect
-        self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center
+        self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center = pg.mouse.get_pos()
         self.rotated = not self.rotated
 
     def check_for_collisions(self, fleet):
@@ -76,23 +82,23 @@ class Ship(Wrapper):
         self.image_rect.topleft = self.top_left
         self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center
 
-    def snap_to_grid_edge(self, grid_coords, cell_size):
+    def snap_to_grid_edge(self, grid_coords, cell_size): # XDDD
         if self.image_rect.topleft != self.top_left:
 
-            if self.image_rect.left > grid_coords[0][-1][0] + cell_size or \
-                    self.image_rect.right < grid_coords[0][0][0] or \
-                    self.image_rect.top > grid_coords[-1][0][1] + cell_size or \
-                    self.image_rect.bottom < grid_coords[0][0][1]:
+            if self.image_rect.left > grid_coords[1][-1][0] + cell_size or \
+                    self.image_rect.right < grid_coords[1][1][0] or \
+                    self.image_rect.top > grid_coords[-1][1][1] + cell_size or \
+                    self.image_rect.bottom < grid_coords[1][1][1]:
                 self.default_position()
 
-            elif self.image_rect.right > grid_coords[0][-1][0] + cell_size:
-                self.image_rect.right = grid_coords[0][-1][0] + cell_size
-            elif self.image_rect.left < grid_coords[0][0][0]:
-                self.image_rect.left = grid_coords[0][0][0]
-            elif self.image_rect.top < grid_coords[0][0][1]:
-                self.image_rect.top = grid_coords[0][0][1]
-            elif self.image_rect.bottom > grid_coords[-1][0][1] + cell_size:
-                self.image_rect.bottom = grid_coords[-1][0][1] + cell_size
+            if self.image_rect.right > grid_coords[1][-1][0] + cell_size:
+                self.image_rect.right = grid_coords[1][-1][0] + cell_size
+            if self.image_rect.left < grid_coords[1][1][0]:
+                self.image_rect.left = grid_coords[1][1][0]
+            if self.image_rect.top < grid_coords[1][1][1]:
+                self.image_rect.top = grid_coords[1][1][1]
+            if self.image_rect.bottom > grid_coords[-1][1][1] + cell_size:
+                self.image_rect.bottom = grid_coords[-1][1][1] + cell_size
             self.v_image_rect.center = self.h_image_rect.center = self.image_rect.center
 
     def snap_to_grid(self, grid_coords, cell_size):
@@ -104,12 +110,8 @@ class Ship(Wrapper):
                         self.image_rect.topleft = (cell[0], cell[1] + (cell_size - self.image.get_height()) // 2)
                     else:
                         self.image_rect.topleft = (cell[0] + (cell_size - self.image.get_width()) // 2, cell[1])
-
-
         self.h_image_rect.center = self.v_image_rect.center = self.image_rect.center
     
     def __str__(self):
         return 'S'
 
-    # def __int__(self):
-    #     return 1
