@@ -32,8 +32,8 @@ class RoomMenu:
                     self.running = False
 
                 elif event.type == pg.MOUSEBUTTONDOWN:
-                    for button in self.buttons:
+                    for idx, button in enumerate(self.buttons):
                         if button.click(pg.mouse.get_pos()):
                             self.running = False
-                            game = OnlineGame(self.screen)
+                            game = OnlineGame(self.screen, PORTS[idx])
 

@@ -2,18 +2,18 @@ import socket
 import pickle
 from constants import HOST, PORT
 class Network:
-    def __init__(self) -> None:
+    def __init__(self, port = PORT) -> None:
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server = HOST
-        self.port = PORT
+        self.port = port
         self.addr = (self.server, self.port)
 
     
     def connect(self):
         try:
             self.client.connect(self.addr)
-        except:
-            pass
+        except ConnectionError:
+            return
     
     def send(self, data):
         try:

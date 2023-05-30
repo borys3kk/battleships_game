@@ -4,15 +4,13 @@ from datetime import datetime
 import time
 from os import getpid
 class OnlineGame(Game):
-    def __init__(self, screen):
-        self.network = Network()
+    def __init__(self, screen, port):
+        self.network = Network(port)
         self.game_won = False
 
         self.player = Player()
         
         self.pid = getpid()
-
-        self.network = Network()
 
         self.data_to_send = ServerData()
         self.callback = None
@@ -73,7 +71,6 @@ class OnlineGame(Game):
                                 self.player.board = self.create_game_logic(self.player.fleet, self.left_grid.grid_cells_coords)
                                 self.player.make_shots()
                                 self.network.send(True)
-                                self.turn = self.network.receive()
                                 print("YOU START: ", self.turn)
                                 self.start_game_on_server()
                             else:
@@ -85,9 +82,27 @@ class OnlineGame(Game):
 
     def wait_for_other_player(self):
         self.other_player_connected = self.network.receive()
+    
+    def start_wait_for_ready_thread(self):
+        self.thread = Thread(target=self.wait_for_ready)
+        self.thread.start()
+    
+    def wait_for_ready(self):
+        self.turn = self.network.receive()
 
     def start_game_on_server(self):
+        self.start_wait_for_ready_thread()
+        self.update_screen()
         self.game_started = True
+
+        if self.turn is None:
+            while True:
+                self.clock.tick(60)
+                for event in pg.event.get():
+                    if event.type == pg.MOUSEBUTTONDOWN:
+                        sg.popup("Wait fot other player to get ready!")
+                if self.turn is not None:
+                    break
         print("GAME STARTED")
         self.update_screen()
         self.update_round_text()
