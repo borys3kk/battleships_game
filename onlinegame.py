@@ -3,28 +3,31 @@ from serverdata import ServerData
 from datetime import datetime
 import time
 from os import getpid
+
+
 class OnlineGame(Game):
     def __init__(self, screen, port):
         self.network = Network(port)
         self.game_won = False
 
         self.player = Player()
-        
+
         self.pid = getpid()
 
         self.data_to_send = ServerData()
         self.callback = None
         self.other_player_connected = False
-        
+
         self.once = True
 
         self.callback_thread = None
         self.thread = None
+        self.font = pg.font.SysFont("comicsans", 40)
 
         # TODO ADD CONNECTION STATUS IN GAME
         # self.empty_string = "                                               "
-        # self.connection_info = self.font.render("Waiting for other player" if not self.other_player_connected else "Other player connected!", True, (255, 255, 255))
-        # self.text_rect = self.turn_text.get_rect()
+        self.wait_text = "Waiting for your opponent"
+        # self.text_rect = self.display_text.get_rect()
 
         self.network.connect()
         self.cnt = 0
@@ -32,13 +35,10 @@ class OnlineGame(Game):
         self.your_turn = "                 Your turn!                   "
         self.computer_turn = "Opponent's turn!"
 
-        self.font = pg.font.SysFont("comicsans", 40)
-        self.turn_text = self.font.render(self.your_turn, True,
-                                          (255, 255, 255))
-        self.text_rect = self.turn_text.get_rect()
+        self.display_text = self.font.render(self.your_turn, True, (255, 255, 255))
+        self.text_rect = self.display_text.get_rect()
         self.text_rect.center = (TEXT_POSITION[0], TEXT_POSITION[1])
         super().__init__(screen)
-
 
     def get_ready(self):
         print(f"Player with pid: {self.pid}")
@@ -55,7 +55,7 @@ class OnlineGame(Game):
                     self.cnt += 2
                     self.thread.join()
                     print("can start game :)")
-                    print("Current Time = ", datetime.now().strftime("%H:%M:%S"))   
+                    print("Current Time = ", datetime.now().strftime("%H:%M:%S"))
                 else:
                     if event.type == pg.QUIT:
                         self.running = False
@@ -68,13 +68,15 @@ class OnlineGame(Game):
                                     self.update_screen()
                         if self.start_button.click(pg.mouse.get_pos()):
                             if self.all_placed():
-                                self.player.board = self.create_game_logic(self.player.fleet, self.left_grid.grid_cells_coords)
+                                self.player.board = self.create_game_logic(self.player.fleet,
+                                                                           self.left_grid.grid_cells_coords)
                                 self.player.make_shots()
                                 self.network.send(True)
                                 print("YOU START: ", self.turn)
                                 self.start_game_on_server()
                             else:
-                                sg.Popup("Not all ships have been placed, press r to place them randomly!", title="Error")
+                                sg.Popup("Not all ships have been placed, press r to place them randomly!",
+                                         title="Error")
                     elif event.type == pg.KEYDOWN:
                         if event.key == pg.K_r and not self.game_started:
                             self.player.randomize_ships(self.player.fleet, self.left_grid.grid_cells_coords)
@@ -82,11 +84,11 @@ class OnlineGame(Game):
 
     def wait_for_other_player(self):
         self.other_player_connected = self.network.receive()
-    
+
     def start_wait_for_ready_thread(self):
         self.thread = Thread(target=self.wait_for_ready)
         self.thread.start()
-    
+
     def wait_for_ready(self):
         self.turn = self.network.receive()
 
@@ -100,6 +102,7 @@ class OnlineGame(Game):
                 self.clock.tick(60)
                 for event in pg.event.get():
                     if event.type == pg.MOUSEBUTTONDOWN:
+                        self.update_round_text()
                         sg.popup("Wait fot other player to get ready!")
                 if self.turn is not None:
                     break
@@ -139,8 +142,6 @@ class OnlineGame(Game):
             self.callback = None
             self.game_started = False
             self.running = False
-        
-        
 
     def handle_player_turn(self):
         self.shoot_opponent(self.player.shots, self.callback.get_shot(), self.right_grid.grid_cells_coords)
@@ -157,17 +158,15 @@ class OnlineGame(Game):
         self.game_won = not self.all_destroyed(self.player.fleet)
 
         self.callback.set_game_finished(not self.game_won)
-        
+
         if self.callback.get_game_finished():
             self.callback.set_game_won(not self.game_won)
             self.network.send(self.callback)
             self.handle_game_finished()
 
-
         self.network.send(self.callback)
         self.callback = None
         self.once = not self.once
-
 
     def start_wait_for_attack_thread(self):
         print(f"waiting for attack started with pid: {getpid()}")
@@ -187,8 +186,8 @@ class OnlineGame(Game):
         self.callback_thread.start()
 
     def attack(self, shot):
-        self.send_attack(shot) # send shot through server
-        self.start_callback_thread() # get callback from server
+        self.send_attack(shot)  # send shot through server
+        self.start_callback_thread()  # get callback from server
 
     def send_attack(self, shot):
         # set the field in array so that we cant shot twice in the same spot
@@ -200,16 +199,16 @@ class OnlineGame(Game):
         self.data_to_send.set_hit(None)
         self.network.send(self.data_to_send)
 
-    def check_valid_shot(self, board, shot): # we only check if we have not yet shot on given position
+    def check_valid_shot(self, board, shot):  # we only check if we have not yet shot on given position
         if 0 <= shot[0] <= 9 and 0 <= shot[1] <= 9:
             if board[shot[0]][shot[1]] == 0:
                 return True
             return False
-    
+
     def shoot_opponent(self, board, shot, grid_coords):
         self.shot_sound.play()
         x, y = grid_coords[shot[0] + 1][shot[1] + 1]
-        
+
         if self.callback.get_hit():
             self.hit_sound.play()
             board[shot[0]][shot[1]] = 'X'
@@ -221,7 +220,6 @@ class OnlineGame(Game):
             self.blue_token_rect.topleft = (x, y)
             self.screen.blit(self.blue_token, self.blue_token_rect)
         pg.display.update()
-
 
     def shoot_player(self, board, shot, grid_coords):
         self.shot_sound.play()
@@ -243,8 +241,11 @@ class OnlineGame(Game):
 
     def update_round_text(self):
         self.screen.fill(pg.Color("black"), self.text_rect)
-        self.turn_text = self.font.render(self.your_turn if self.turn else self.computer_turn, True, (255, 255, 255))
-        self.text_rect = self.turn_text.get_rect()
+        if self.other_player_connected:
+            self.display_text = self.font.render(self.your_turn if self.turn else self.computer_turn, True, (255, 255, 255))
+        else:
+            self.display_text = self.font.render(self.wait_text, True,(255, 255, 255))
+        self.text_rect = self.display_text.get_rect()
         self.text_rect.center = (TEXT_POSITION[0], TEXT_POSITION[1])
-        self.screen.blit(self.turn_text, self.text_rect)
+        self.screen.blit(self.display_text, self.text_rect)
         pg.display.update(self.text_rect)
